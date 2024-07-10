@@ -1,0 +1,2128 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{TimeSeries\_JV}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{287}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{repr}\PY{p}{)}
+\PY{n+nf}{options}\PY{p}{(}\PY{n}{repr.plot.width} \PY{o}{=} \PY{l+m}{12}\PY{p}{,} \PY{n}{repr.plot.height} \PY{o}{=} \PY{l+m}{12}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \section{Exercise 1}\label{exercise-1}
+
+\textbf{\emph{Read the file ldeaths in the folder datasets of R. Make
+the graphical representation. Identify and estimate the trend, the
+seasonal component and the residual component. Are the residuals a
+sample of an IID noise?}}
+
+    Firstly, we'll plot the data of the ldeaths dataset from the R datasets.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{395}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}ldeaths} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{ldeaths}
+
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{data\PYZus{}ldeaths}\PY{p}{,}
+     \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Monthly Deaths from Lung Diseases in the UK (1974\PYZhy{}1979)\PYZdq{}}\PY{p}{,}
+     \PY{n}{ylab}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Number of Deaths\PYZdq{}}\PY{p}{,}
+     \PY{n}{xlab}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Year\PYZdq{}}\PY{p}{,}
+     \PY{n}{col}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{blue\PYZdq{}}\PY{p}{,}
+     \PY{n}{lwd}\PY{o}{=}\PY{l+m}{2}\PY{p}{,}
+     \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{o\PYZdq{}}\PY{p}{,}
+     \PY{n}{pch}\PY{o}{=}\PY{l+m}{20}\PY{p}{)}
+
+\PY{n+nf}{grid}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_3_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{396}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{t} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{1}\PY{o}{:}\PY{p}{(}\PY{l+m}{6}\PY{o}{*}\PY{l+m}{12}\PY{p}{)} \PY{c+c1}{\PYZsh{} Generate the indexes of the timepoints}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{397}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{layout }\PY{p}{(}\PY{l+m}{1}\PY{o}{:}\PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n+nf}{aggregate}\PY{p}{(}\PY{n}{data\PYZus{}ldeaths}\PY{p}{)}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Deaths across time by year\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{boxplot}\PY{p}{(}\PY{n}{data\PYZus{}ldeaths}\PY{o}{\PYZti{}}\PY{n+nf}{cycle}\PY{p}{(}\PY{n}{data\PYZus{}ldeaths}\PY{p}{)}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Deaths across time by month\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_5_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Here we can see the data across years, and the mean and variance of the
+month cycles.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{398}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{log}\PY{p}{(}\PY{n}{data\PYZus{}ldeaths}\PY{p}{)}
+\PY{n+nf}{plot }\PY{p}{(}\PY{n}{t}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{xlab}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{time\PYZdq{}}\PY{p}{,} \PY{n}{ylab}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{deaths\PYZdq{}}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{o\PYZdq{}} \PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Logarithmic Transformation of Lung Deaths\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_7_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We now proceed to calculate the linear trend of the data, as we can see
+we get an intercept \(b\) of approximately 7.7223 and a \(t\) of -0.0036
+in: \[y=tX+b\]
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{399}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{line}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{lm}\PY{p}{(}\PY{n}{y}\PY{o}{\PYZti{}}\PY{n}{t}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{line}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{t}\PY{p}{,}\PY{n}{y}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{o\PYZdq{}}\PY{p}{,}\PY{n}{xlab}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{time\PYZdq{}}\PY{p}{,}\PY{n}{ylab}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{deaths\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Linear trend of Lung Deaths\PYZdq{}}\PY{p}{)}\PY{p}{;}\PY{n+nf}{abline}\PY{p}{(}\PY{n}{line}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+lm(formula = y \textasciitilde{} t)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.43429 -0.22570 -0.04839  0.20538  0.63989 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  7.722376   0.065789 117.381   <2e-16 ***
+t           -0.003686   0.001566  -2.353   0.0214 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2762 on 70 degrees of freedom
+Multiple R-squared:  0.07332,	Adjusted R-squared:  0.06009 
+F-statistic: 5.539 on 1 and 70 DF,  p-value: 0.02141
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_9_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Now we can remove the trend from the data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{400}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{log}\PY{p}{(}\PY{n}{data\PYZus{}ldeaths}\PY{p}{)}
+\PY{n+nf}{lm}\PY{p}{(}\PY{n}{y}\PY{o}{\PYZti{}}\PY{n}{t}\PY{p}{)}
+\PY{n}{trend}\PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{\PYZhy{}0.003686}\PY{o}{*}\PY{n}{t}\PY{l+m}{+7.722376}
+\PY{n}{z}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{y}\PY{o}{\PYZhy{}}\PY{n}{trend}
+\PY{n+nf}{plot.ts}\PY{p}{(}\PY{n}{z}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Data without trend\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+lm(formula = y \textasciitilde{} t)
+
+Coefficients:
+(Intercept)            t  
+   7.722376    -0.003686  
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_11_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can now compute the seasonality component by segmenting the time
+series into a matrix with 12 columns that represent the months.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{401}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{z} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{matrix}\PY{p}{(}\PY{n}{z}\PY{p}{,} \PY{n}{ncol}\PY{o}{=}\PY{l+m}{12}\PY{p}{,} \PY{n}{byrow}\PY{o}{=}\PY{k+kc}{TRUE}\PY{p}{)}
+\PY{n}{z} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{t}\PY{p}{(}\PY{n}{z}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{402}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{e}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{apply}\PY{p}{(}\PY{n}{z}\PY{p}{,}\PY{l+m}{1}\PY{p}{,}\PY{n}{mean}\PY{p}{)}
+\PY{n}{ee}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{mean}\PY{p}{(}\PY{n}{e}\PY{p}{)}
+\PY{n}{s}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{e}\PY{o}{\PYZhy{}}\PY{n}{ee}
+\PY{n+nf}{plot }\PY{p}{(}\PY{n}{s}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{o\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Seasonality Component\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_14_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can now repeat this component to match the length of the original
+series and substract it from the data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{403}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{est}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{array}\PY{p}{(}\PY{n}{s}\PY{p}{,}\PY{l+m}{12}\PY{o}{*}\PY{l+m}{6}\PY{p}{)}
+\PY{n+nf}{plot }\PY{p}{(}\PY{n}{est}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{o\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Seasonality component of length n\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{404}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{dim}\PY{p}{(}\PY{n}{z}\PY{p}{)}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{12}\PY{o}{*}\PY{l+m}{6}
+\PY{n}{u}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{z}\PY{o}{\PYZhy{}}\PY{n}{est}
+\PY{n+nf}{plot }\PY{p}{(}\PY{n}{u}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{o\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residuals of the data\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    This last plot represents the residuals of the data, let us now check if
+it truly is IID noise.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{405}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{1000}
+\PY{n}{z1}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{rnorm}\PY{p}{(}\PY{n}{n}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{z1}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Random Gaussian Noise\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_19_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{406}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,} \PY{l+m}{2}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{hist}\PY{p}{(}\PY{n}{z1}\PY{p}{,}\PY{n}{freq}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,} \PY{n}{main} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{Noise Histogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{hist}\PY{p}{(}\PY{n}{u}\PY{p}{,}\PY{n}{freq}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,} \PY{n}{main} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{Residuals Histogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{z1}\PY{p}{,} \PY{n}{main} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{Noise Correlogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{u}\PY{p}{,} \PY{n}{main} \PY{o}{=} \PY{l+s}{\PYZdq{}}\PY{l+s}{Residuals Correlogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_20_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{407}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{Box.test }\PY{p}{(}\PY{n}{z1}\PY{p}{,} \PY{n}{lag}\PY{o}{=}\PY{l+m}{1}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{Box.test }\PY{p}{(}\PY{n}{u}\PY{p}{,} \PY{n}{lag}\PY{o}{=}\PY{l+m}{1}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  z1
+X-squared = 5.9906, df = 1, p-value = 0.01438
+
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  u
+X-squared = 4.7035, df = 1, p-value = 0.0301
+
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{408}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{qqnorm}\PY{p}{(}\PY{n}{z1}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Noise Q\PYZhy{}Q norm plot\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{qqline}\PY{p}{(}\PY{n}{z1}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Noise Q\PYZhy{}Q line plot\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{qqnorm}\PY{p}{(}\PY{n}{u}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residuals Q\PYZhy{}Q norm plot\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{qqline}\PY{p}{(}\PY{n}{u}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residuals Q\PYZhy{}Q line plot\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_22_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{409}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{shapiro.test}\PY{p}{(}\PY{n}{z1}\PY{p}{)}
+\PY{n+nf}{shapiro.test}\PY{p}{(}\PY{n}{u}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Shapiro-Wilk normality test
+
+data:  z1
+W = 0.99891, p-value = 0.8259
+
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Shapiro-Wilk normality test
+
+data:  u
+W = 0.98442, p-value = 0.5167
+
+    \end{Verbatim}
+
+    
+    As we can see, the correlogram and the tests seem to indicate that the
+residuals are IID noise. Nevertheless, the residuals still have some
+autocorrelation after \(h\) lags.
+
+    \#Exercise 2 \textbf{\emph{Simulate a Gaussian white noise of n = 10.000
+data. Verify by testing that it is an IID noise and a Gaussian white
+noise. Simulate a Gaussian Random Walk. Simulate IID noises of 10.000
+data that are not a Gaussian white noise: a Poisson noise and an
+exponential noise. Test all what you can.}}
+
+    Firstly let us simulate gaussian white noise with \(n=10000\).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{428}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{10000}
+\PY{n}{white\PYZus{}noise\PYZus{}data}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{rnorm}\PY{p}{(}\PY{n}{n}\PY{p}{)} \PY{c+c1}{\PYZsh{} Generate the white noise}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{429}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{white\PYZus{}noise\PYZus{}data}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{White Noise Data\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{hist}\PY{p}{(}\PY{n}{white\PYZus{}noise\PYZus{}data}\PY{p}{,}\PY{n}{freq}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{White Noise Histogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{white\PYZus{}noise\PYZus{}data}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{White Noise Correlogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_28_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    As we can see, this is the typical correlogram of an IID-noise.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{431}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{gaussian\PYZus{}random\PYZus{}walk}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{cumsum}\PY{p}{(}\PY{n}{white\PYZus{}noise\PYZus{}data}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{gaussian\PYZus{}random\PYZus{}walk}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Random walk using the noise\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_30_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{433}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{acf}\PY{p}{(}\PY{n+nf}{diff}\PY{p}{(}\PY{n}{gaussian\PYZus{}random\PYZus{}walk}\PY{p}{)}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{The differences are still noise\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_31_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Now we can test noises of non-gaussian sources: Poisson distribution and
+exponentials.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{307}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n} \PY{o}{\PYZlt{}\PYZhy{}} \PY{l+m}{10000}
+\PY{n}{poisson\PYZus{}noise} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rpois }\PY{p}{(}\PY{n}{n}\PY{p}{,} \PY{n}{lambda}\PY{o}{=}\PY{l+m}{5}\PY{p}{)}
+\PY{n}{exponential\PYZus{}noise} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{rexp}\PY{p}{(}\PY{n}{n}\PY{p}{,} \PY{n}{rate}\PY{o}{=}\PY{l+m}{10}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{308}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{poisson\PYZus{}noise}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Poisson Noise Data\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{hist}\PY{p}{(}\PY{n}{poisson\PYZus{}noise}\PY{p}{,}\PY{n}{freq}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Poisson Noise Histogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{poisson\PYZus{}noise}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Poisson Noise Correlogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_34_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{309}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{exponential\PYZus{}noise}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Exponential Noise Data\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{hist}\PY{p}{(}\PY{n}{exponential\PYZus{}noise}\PY{p}{,}\PY{n}{freq}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Exponential Noise Histogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{exponential\PYZus{}noise}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Exponential Noise Correlogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_35_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{310}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{Box.test }\PY{p}{(}\PY{n}{poisson\PYZus{}noise}\PY{p}{,} \PY{n}{lag}\PY{o}{=}\PY{l+m}{1}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{Box.test }\PY{p}{(}\PY{n}{exponential\PYZus{}noise}\PY{p}{,} \PY{n}{lag}\PY{o}{=}\PY{l+m}{1}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  poisson\_noise
+X-squared = 0.33487, df = 1, p-value = 0.5628
+
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  exponential\_noise
+X-squared = 0.12587, df = 1, p-value = 0.7228
+
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{311}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{qqnorm}\PY{p}{(}\PY{n}{poisson\PYZus{}noise}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Poisson Noise Q\PYZhy{}Q norm plot\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{qqline}\PY{p}{(}\PY{n}{poisson\PYZus{}noise}\PY{p}{)}
+\PY{n+nf}{qqnorm}\PY{p}{(}\PY{n}{exponential\PYZus{}noise}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Exponential Noise Q\PYZhy{}Q norm plot\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{qqline}\PY{p}{(}\PY{n}{exponential\PYZus{}noise}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_37_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{312}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{shapiro.test}\PY{p}{(}\PY{n}{poisson\PYZus{}noise}\PY{p}{[}\PY{l+m}{1}\PY{o}{:}\PY{l+m}{5000}\PY{p}{]}\PY{p}{)}
+\PY{n+nf}{shapiro.test}\PY{p}{(}\PY{n}{exponential\PYZus{}noise}\PY{p}{[}\PY{l+m}{1}\PY{o}{:}\PY{l+m}{5000}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Shapiro-Wilk normality test
+
+data:  poisson\_noise[1:5000]
+W = 0.97202, p-value < 2.2e-16
+
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Shapiro-Wilk normality test
+
+data:  exponential\_noise[1:5000]
+W = 0.81829, p-value < 2.2e-16
+
+    \end{Verbatim}
+
+    
+    As we can see, both the correlograms show that both of these samples are
+noise. Nonetheless, using the Q-Q test and the shapiro test we can see
+that they are not gaussian noise.
+
+    \#Exercise 3 \textbf{\emph{Simulate an AR(p) model with 10000 data, for
+p=1 and p=2. Fit the best model to the data in both cases. Validate the
+model by showing the residuals are an IID noise.}}
+
+    Firstly we will simulate an AR(1) model with \(n=10000\) with parameter
+equal to 0.8792.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{435}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{10000}
+\PY{n}{x\PYZus{}p1}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima.sim}\PY{p}{(}\PY{n+nf}{list}\PY{p}{(}\PY{n}{ar} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0.8792}\PY{p}{)}\PY{p}{,} \PY{n}{sd} \PY{o}{=} \PY{n+nf}{sqrt}\PY{p}{(}\PY{l+m}{0.1796}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{n}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{x\PYZus{}p1}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{AR(1) simulation\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_42_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Secondly, we will simulate an AR(2) model with \(n=10000\) with
+parameters equal to \((0.8792,-0.1845)\).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{437}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{x\PYZus{}p2}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima.sim}\PY{p}{(}\PY{n+nf}{list}\PY{p}{(}\PY{n}{ar} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0.8792}\PY{p}{,} \PY{l+m}{\PYZhy{}0.1845}\PY{p}{)}\PY{p}{,} \PY{n}{sd} \PY{o}{=} \PY{n+nf}{sqrt}\PY{p}{(}\PY{l+m}{0.1796}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{n}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{x\PYZus{}p2}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{AR(2) simulation\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_44_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can now fit AR models to both simulations.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{438}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{best\PYZus{}s1}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{ar}\PY{p}{(}\PY{n}{x\PYZus{}p1}\PY{p}{,} \PY{n}{order.max}\PY{o}{=}\PY{l+m}{3}\PY{p}{,} \PY{n}{method}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{mle\PYZdq{}}\PY{p}{)}
+\PY{n}{best\PYZus{}s1}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+ar(x = x\_p1, order.max = 3, method = "mle")
+
+Coefficients:
+     1  
+0.8758  
+
+Order selected 1  sigma\^{}2 estimated as  0.9889
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{316}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{best\PYZus{}s2}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{ar}\PY{p}{(}\PY{n}{x\PYZus{}p2}\PY{p}{,} \PY{n}{order.max}\PY{o}{=}\PY{l+m}{3}\PY{p}{,} \PY{n}{method}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{mle\PYZdq{}}\PY{p}{)}
+\PY{n}{best\PYZus{}s2}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+ar(x = x\_p2, order.max = 3, method = "mle")
+
+Coefficients:
+      1        2  
+ 0.8237  -0.1905  
+
+Order selected 2  sigma\^{}2 estimated as  0.9996
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{317}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{s\PYZus{}p1}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima}\PY{p}{(}\PY{n}{x\PYZus{}p1}\PY{p}{,} \PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{0}\PY{p}{)}\PY{p}{,} \PY{n}{method}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{ML\PYZdq{}}\PY{p}{)}
+\PY{n}{s\PYZus{}p1}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+arima(x = x\_p1, order = c(1, 0, 0), method = "ML")
+
+Coefficients:
+         ar1  intercept
+      0.8552    -0.5755
+s.e.  0.0166     0.2168
+
+sigma\^{}2 estimated as 0.9969:  log likelihood = -1418.05,  aic = 2842.1
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{318}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{s\PYZus{}p2}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima}\PY{p}{(}\PY{n}{x\PYZus{}p2}\PY{p}{,} \PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{0}\PY{p}{)}\PY{p}{,} \PY{n}{method}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{ML\PYZdq{}}\PY{p}{)}
+\PY{n}{s\PYZus{}p2}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+arima(x = x\_p2, order = c(2, 0, 0), method = "ML")
+
+Coefficients:
+         ar1      ar2  intercept
+      0.8237  -0.1905    -0.0691
+s.e.  0.0311   0.0311     0.0861
+
+sigma\^{}2 estimated as 0.9996:  log likelihood = -1419.12,  aic = 2846.23
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{319}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{resid}\PY{p}{(}\PY{n}{s\PYZus{}p1}\PY{p}{)}
+\PY{n}{h}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{floor}\PY{p}{(}\PY{n+nf}{log}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{lag}\PY{o}{=}\PY{n}{h}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{lag}\PY{o}{=}\PY{n}{h}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residual Data\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{hist}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{freq}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residual Histogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residual Correlogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  x
+X-squared = 4947.7, df = 6, p-value < 2.2e-16
+
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  y
+X-squared = 10.186, df = 6, p-value = 0.117
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_50_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{320}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{resid}\PY{p}{(}\PY{n}{s\PYZus{}p2}\PY{p}{)}
+\PY{n}{h}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{floor}\PY{p}{(}\PY{n+nf}{log}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{lag}\PY{o}{=}\PY{n}{h}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{lag}\PY{o}{=}\PY{n}{h}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residual Data\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{hist}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{freq}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residual Histogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residual Correlogram\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  x
+X-squared = 4947.7, df = 6, p-value < 2.2e-16
+
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  y
+X-squared = 7.1279, df = 6, p-value = 0.3092
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_51_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    As we can see, residuals for both simulations are IID noise as the
+correlogram indicate.
+
+    \#Exercise 4 \textbf{\emph{Simulate an ARMA (2,1). Compute the
+autocorrealtion and the partial autocorrelation. Fit the best ARMA
+model. Validate it. Make the graphical representation of the
+forecasting.}}
+
+    Firstly, let's simulate 1000 points with an ARMA(2,1) model with
+parameters \(AR=(0.25, 0.15)\) and \(MA=(0.35)\).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{321}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ARMA\PYZus{}sim}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima.sim}\PY{p}{(}\PY{n+nf}{list}\PY{p}{(}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{,} \PY{n}{ar}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0.25}\PY{p}{,}\PY{l+m}{0.15}\PY{p}{)}\PY{p}{,} \PY{n}{ma}\PY{o}{=}\PY{l+m}{0.35}\PY{p}{)}\PY{p}{,} \PY{n}{n}\PY{o}{=}\PY{l+m}{1000}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{ARMA\PYZus{}sim}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_55_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Now for the ACF and PACF we will use \(k = ln(n) = 6.9\) approximately
+7.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{322}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{ARMA\PYZus{}sim}\PY{p}{,}\PY{l+m}{7}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Autocorrelation of simulation\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{pacf}\PY{p}{(}\PY{n}{ARMA\PYZus{}sim}\PY{p}{,}\PY{l+m}{7}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Partial Autocorrelation of simulation\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_57_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Now we can fit the ARMA(2,1) model to the simulation.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{323}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ARMA\PYZus{}model}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima}\PY{p}{(}\PY{n}{ARMA\PYZus{}sim}\PY{p}{,} \PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{,} \PY{n}{method}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{ML\PYZdq{}}\PY{p}{)}
+\PY{n}{ARMA\PYZus{}model}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+arima(x = ARMA\_sim, order = c(2, 0, 1), method = "ML")
+
+Coefficients:
+          ar1     ar2     ma1  intercept
+      -0.2586  0.5184  0.8365     0.0749
+s.e.   0.1167  0.0673  0.1185     0.0768
+
+sigma\^{}2 estimated as 0.9622:  log likelihood = -1399.87,  aic = 2809.73
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{324}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{ARMA\PYZus{}sim}\PY{p}{,}\PY{n}{lag}\PY{o}{=}\PY{l+m}{7}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  ARMA\_sim
+X-squared = 519.65, df = 7, p-value < 2.2e-16
+
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{325}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{resid}\PY{p}{(}\PY{n}{ARMA\PYZus{}model}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{326}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{lag}\PY{o}{=}\PY{l+m}{7}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  y
+X-squared = 2.7099, df = 7, p-value = 0.9105
+
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{327}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{tsdiag}\PY{p}{(}\PY{n}{ARMA\PYZus{}model}\PY{p}{,} \PY{n}{gof.lag}\PY{o}{=}\PY{l+m}{20}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_63_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can see that the residuals are IID noise since the p-values and
+correlograms fall into the IID noise patterns.
+
+Let's do forecasting now
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{328}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{install.packages}\PY{p}{(}\PY{l+s}{\PYZsq{}}\PY{l+s}{forecast\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Installing package into ‘/usr/local/lib/R/site-library’
+(as ‘lib’ is unspecified)
+
+also installing the dependencies ‘lmtest’, ‘Rcpp’, ‘timeDate’, ‘urca’,
+‘RcppArmadillo’
+
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{329}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{require}\PY{p}{(}\PY{n}{forecast}\PY{p}{)}
+\PY{n}{y}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{auto.arima}\PY{p}{(}\PY{n}{ARMA\PYZus{}sim}\PY{p}{,} \PY{n}{max.p}\PY{o}{=}\PY{l+m}{2}\PY{p}{,} \PY{n}{max.d}\PY{o}{=}\PY{l+m}{0}\PY{p}{,}\PY{n}{max.q}\PY{o}{=}\PY{l+m}{2}\PY{p}{)}
+\PY{n}{y}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Loading required package: forecast
+
+    \end{Verbatim}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+Series: ARMA\_sim 
+ARIMA(1,0,0) with zero mean 
+
+Coefficients:
+         ar1
+      0.5926
+s.e.  0.0254
+
+sigma\^{}2 = 0.9661:  log likelihood = -1401.4
+AIC=2806.81   AICc=2806.82   BIC=2816.62
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{330}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{yz}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{resid}\PY{p}{(}\PY{n}{y}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{yz}\PY{p}{,} \PY{n}{lag}\PY{o}{=}\PY{l+m}{7}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{xfc}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{forecast}\PY{p}{(}\PY{n}{ARMA\PYZus{}sim}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{xfc}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  yz
+X-squared = 5.0994, df = 7, p-value = 0.6478
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_67_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \#Exercise 5 \textbf{\emph{Take the file Nile in datasets. Fit the best
+ARIMA model to the process. Validate it. Make the graphical
+representation of the forecasting.}}
+
+    Let's load the Nile dataset into our workspace.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{439}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{nile\PYZus{}data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{Nile}
+\PY{n}{nile\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A Time Series:\\\begin{enumerate*}
+\item 1120
+\item 1160
+\item 963
+\item 1210
+\item 1160
+\item 1160
+\item 813
+\item 1230
+\item 1370
+\item 1140
+\item 995
+\item 935
+\item 1110
+\item 994
+\item 1020
+\item 960
+\item 1180
+\item 799
+\item 958
+\item 1140
+\item 1100
+\item 1210
+\item 1150
+\item 1250
+\item 1260
+\item 1220
+\item 1030
+\item 1100
+\item 774
+\item 840
+\item 874
+\item 694
+\item 940
+\item 833
+\item 701
+\item 916
+\item 692
+\item 1020
+\item 1050
+\item 969
+\item 831
+\item 726
+\item 456
+\item 824
+\item 702
+\item 1120
+\item 1100
+\item 832
+\item 764
+\item 821
+\item 768
+\item 845
+\item 864
+\item 862
+\item 698
+\item 845
+\item 744
+\item 796
+\item 1040
+\item 759
+\item 781
+\item 865
+\item 845
+\item 944
+\item 984
+\item 897
+\item 822
+\item 1010
+\item 771
+\item 676
+\item 649
+\item 846
+\item 812
+\item 742
+\item 801
+\item 1040
+\item 860
+\item 874
+\item 848
+\item 890
+\item 744
+\item 749
+\item 838
+\item 1050
+\item 918
+\item 986
+\item 797
+\item 923
+\item 975
+\item 815
+\item 1020
+\item 906
+\item 901
+\item 1170
+\item 912
+\item 746
+\item 919
+\item 718
+\item 714
+\item 740
+\end{enumerate*}
+
+
+    
+    And now let's find the best ARIMA model to the data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{440}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ARMA\PYZus{}nile}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{auto.arima}\PY{p}{(}\PY{n}{nile\PYZus{}data}\PY{p}{)}
+\PY{n}{ARMA\PYZus{}nile}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+Series: nile\_data 
+ARIMA(1,1,1) 
+
+Coefficients:
+         ar1      ma1
+      0.2544  -0.8741
+s.e.  0.1194   0.0605
+
+sigma\^{}2 = 20177:  log likelihood = -630.63
+AIC=1267.25   AICc=1267.51   BIC=1275.04
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{443}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{yz}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{resid}\PY{p}{(}\PY{n}{ARMA\PYZus{}nile}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{yz}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Residuals of the model\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{yz}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{ACF of the Residuals\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{yz}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  yz
+X-squared = 0.10739, df = 1, p-value = 0.7431
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_73_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    As we can see, the residuals are IID noise, so the model is a good fit
+to the data.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{334}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{xfc}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{forecast}\PY{p}{(}\PY{n}{nile\PYZus{}data}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{xfc}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_75_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \#Exercise 6 \textbf{\emph{Simulate a FARIMA time series. Fit it the
+best model and test that the residuals of the fitted model are a white
+noise. Fit a FARIMA model to Nile data in datasets. Check that the
+fitted model is a good model.}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{335}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{install.packages}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{fracdiff\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Installing package into ‘/usr/local/lib/R/site-library’
+(as ‘lib’ is unspecified)
+
+    \end{Verbatim}
+
+    To begin, let's simulate 1000 data points with an AR of 0.9 and a \(d\)
+parameter equal to 0.4.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{445}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{n}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{1000}
+\PY{n}{sample}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{fracdiff.sim}\PY{p}{(}\PY{n}{n}\PY{p}{,} \PY{n}{ar}\PY{o}{=}\PY{l+m}{0.9}\PY{p}{,} \PY{n}{d}\PY{o}{=}\PY{l+m}{0.4}\PY{p}{)}
+\PY{n}{x}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{sample}\PY{o}{\PYZdl{}}\PY{n}{series}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Simulation with AR=0.9 and d=0.4\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_79_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Now we can fit the ARFIMA model to the simulation and get the
+coefficients.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{337}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{fracdiff}\PY{p}{)}
+\PY{n}{fit1}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{fracdiff}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{nar}\PY{o}{=}\PY{l+m}{1}\PY{p}{,} \PY{n}{drange}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{0.5}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{fit1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+  fracdiff(x = x, nar = 1, drange = c(0, 0.5)) 
+
+Coefficients:
+   Estimate Std. Error z value Pr(>|z|)    
+d   0.35647    0.01191   29.94   <2e-16 ***
+ar  0.92014    0.01317   69.87   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+sigma[eps] = 1.001226 
+[d.tol = 0.0001221, M = 100, h = 1.498e-05]
+Log likelihood: -1421 ==> AIC = 2847.348 [3 deg.freedom]
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{338}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{d}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{fit1}\PY{o}{\PYZdl{}}\PY{n}{d}
+\PY{n}{d}
+\end{Verbatim}
+\end{tcolorbox}
+
+    0.356470668074661
+
+    
+    We see that both parameters are resonably close with the \(d\) equal to
+0.36, close to 0.4. And the parameter of the AR model is approximately
+0.9 as well.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{446}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{fit2}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{diffseries}\PY{p}{(}\PY{n}{x}\PY{p}{,}\PY{n}{d}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{fit2}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Diffseries of the data\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{fit2}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{ACF of the diffseries\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_84_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{340}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fit3}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima}\PY{p}{(}\PY{n}{fit2}\PY{p}{,}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{0}\PY{p}{)}\PY{p}{)}
+\PY{n}{z}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{resid}\PY{p}{(}\PY{n}{fit3}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{z}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{z}\PY{p}{,}\PY{n+nf}{log}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  z
+X-squared = 4.6285, df = 6.9078, p-value = 0.6956
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_85_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can see that this model is a good fit since the resulting residuals
+are IID noise.
+
+Now let us test it on the Nile Dataset.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{447}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{nile\PYZus{}data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{Nile} \PY{c+c1}{\PYZsh{} Load the data}
+\PY{n}{nile\PYZus{}data}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A Time Series:\\\begin{enumerate*}
+\item 1120
+\item 1160
+\item 963
+\item 1210
+\item 1160
+\item 1160
+\item 813
+\item 1230
+\item 1370
+\item 1140
+\item 995
+\item 935
+\item 1110
+\item 994
+\item 1020
+\item 960
+\item 1180
+\item 799
+\item 958
+\item 1140
+\item 1100
+\item 1210
+\item 1150
+\item 1250
+\item 1260
+\item 1220
+\item 1030
+\item 1100
+\item 774
+\item 840
+\item 874
+\item 694
+\item 940
+\item 833
+\item 701
+\item 916
+\item 692
+\item 1020
+\item 1050
+\item 969
+\item 831
+\item 726
+\item 456
+\item 824
+\item 702
+\item 1120
+\item 1100
+\item 832
+\item 764
+\item 821
+\item 768
+\item 845
+\item 864
+\item 862
+\item 698
+\item 845
+\item 744
+\item 796
+\item 1040
+\item 759
+\item 781
+\item 865
+\item 845
+\item 944
+\item 984
+\item 897
+\item 822
+\item 1010
+\item 771
+\item 676
+\item 649
+\item 846
+\item 812
+\item 742
+\item 801
+\item 1040
+\item 860
+\item 874
+\item 848
+\item 890
+\item 744
+\item 749
+\item 838
+\item 1050
+\item 918
+\item 986
+\item 797
+\item 923
+\item 975
+\item 815
+\item 1020
+\item 906
+\item 901
+\item 1170
+\item 912
+\item 746
+\item 919
+\item 718
+\item 714
+\item 740
+\end{enumerate*}
+
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{448}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fit\PYZus{}nile}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{fracdiff}\PY{p}{(}\PY{n}{nile\PYZus{}data}\PY{p}{,} \PY{n}{nar}\PY{o}{=}\PY{l+m}{1}\PY{p}{,}\PY{n}{nma}\PY{o}{=}\PY{l+m}{1}\PY{p}{)} \PY{c+c1}{\PYZsh{} Fit the ARFIMA model}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{fit\PYZus{}nile}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+  fracdiff(x = nile\_data, nar = 1, nma = 1) 
+
+Coefficients:
+   Estimate Std. Error z value Pr(>|z|)    
+d   0.19005    0.01684  11.288   <2e-16 ***
+ar  0.90474    0.09397   9.628   <2e-16 ***
+ma  0.83657    0.06026  13.882   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+sigma[eps] = 139.8735 
+[d.tol = 0.0001221, M = 100, h = 6.713e-06]
+Log likelihood: -636.1 ==> AIC = 1280.181 [4 deg.freedom]
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{449}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{d\PYZus{}nile}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{fit\PYZus{}nile}\PY{o}{\PYZdl{}}\PY{n}{d}
+\PY{n}{d\PYZus{}nile}
+\end{Verbatim}
+\end{tcolorbox}
+
+    0.190054053215489
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{450}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{2}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{y\PYZus{}nile}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{diffseries}\PY{p}{(}\PY{n}{nile\PYZus{}data}\PY{p}{,}\PY{n}{d\PYZus{}nile}\PY{p}{)}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{y\PYZus{}nile}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{,} \PY{n}{main}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{Diffseries of Nile\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{y\PYZus{}nile}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_90_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{345}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{yz\PYZus{}nile}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{arima}\PY{p}{(}\PY{n}{y\PYZus{}nile}\PY{p}{,}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{0}\PY{p}{,}\PY{l+m}{0}\PY{p}{)}\PY{p}{)}
+\PY{n}{z}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{resid}\PY{p}{(}\PY{n}{yz\PYZus{}nile}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{z}\PY{p}{)}
+\PY{n+nf}{Box.test}\PY{p}{(}\PY{n}{z}\PY{p}{,}\PY{n+nf}{log}\PY{p}{(}\PY{n+nf}{length}\PY{p}{(}\PY{n}{nile\PYZus{}data}\PY{p}{)}\PY{p}{)}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{Ljung\PYZhy{}Box\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+	Box-Ljung test
+
+data:  z
+X-squared = 1.9453, df = 4.6052, p-value = 0.8187
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_91_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    The resulting residuals for this series is IID noise as the model is a
+good fit for it.
+
+    \#Exercise 7 \textbf{\emph{Simulate a GARCH(1,1) time series. Fit the
+best model to this series. Check that the fitted model it is a good
+model. Fit a GARCH model to the logarithmic transformation of series in
+EuStockMarkets of datasets. Check the stylized facts (un-correlation,
+correlation of the squares, heavy tails, volatility clustering). Check
+that the fitted model is a good model.}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{346}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{n}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{10000}
+\PY{n}{a0}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{0.1}
+\PY{n}{a1}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{0.4}
+\PY{n}{b1}\PY{o}{\PYZlt{}\PYZhy{}}\PY{l+m}{0.5}
+\PY{n}{w}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{rnorm}\PY{p}{(}\PY{n}{n}\PY{p}{)}
+\PY{n}{y}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{rep}\PY{p}{(}\PY{l+m}{0}\PY{p}{,}\PY{n}{n}\PY{p}{)}
+\PY{n}{h}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{rep}\PY{p}{(}\PY{l+m}{0}\PY{p}{,}\PY{n}{n}\PY{p}{)}
+\PY{n+nf}{for}\PY{p}{(}\PY{n}{i} \PY{n}{in} \PY{l+m}{2}\PY{o}{:}\PY{n}{n}\PY{p}{)}\PY{p}{\PYZob{}}
+  \PY{n}{h}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{a0}\PY{o}{+}\PY{n}{a1}\PY{o}{*}\PY{p}{(}\PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{l+m}{\PYZhy{}1}\PY{p}{]}\PY{o}{\PYZca{}}\PY{l+m}{2}\PY{p}{)}\PY{o}{+}\PY{n}{b1}\PY{o}{*}\PY{n}{h}\PY{p}{[}\PY{n}{i}\PY{l+m}{\PYZhy{}1}\PY{p}{]}
+  \PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{w}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{*}\PY{n+nf}{sqrt}\PY{p}{(}\PY{n}{h}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+\PY{p}{\PYZcb{}}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{y}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{y}\PY{o}{\PYZca{}}\PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_94_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{347}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{install.packages}\PY{p}{(}\PY{l+s}{\PYZdq{}}\PY{l+s}{tseries\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{library}\PY{p}{(}\PY{n}{tseries}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Installing package into ‘/usr/local/lib/R/site-library’
+(as ‘lib’ is unspecified)
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{348}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{sp}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{garch}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\PY{n}{res}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{sp}\PY{o}{\PYZdl{}}\PY{n}{res}\PY{p}{[}\PY{l+m}{\PYZhy{}1}\PY{p}{]}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{res}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{o}{\PYZca{}}\PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{confint}\PY{p}{(}\PY{n}{sp}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A matrix: 3 × 2 of type dbl
+\begin{tabular}{r|ll}
+  & 2.5 \% & 97.5 \%\\
+\hline
+	a0 & 0.09267028 & 0.1192382\\
+	a1 & 0.37696719 & 0.4470673\\
+	b1 & 0.44212258 & 0.5114359\\
+\end{tabular}
+
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_96_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Let us try the EU stock markets dataset:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{411}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{eu\PYZus{}data} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n}{EuStockMarkets}
+\PY{n+nf}{length}\PY{p}{(}\PY{n}{eu\PYZus{}data}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    7440
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{412}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{log\PYZus{}eu} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{log}\PY{p}{(}\PY{n}{eu\PYZus{}data}\PY{p}{)}
+\PY{n+nf}{summary}\PY{p}{(}\PY{n}{log\PYZus{}eu}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+      DAX             SMI             CAC             FTSE      
+ Min.   :7.246   Min.   :7.370   Min.   :7.385   Min.   :7.732  
+ 1st Qu.:7.464   1st Qu.:7.680   1st Qu.:7.536   1st Qu.:7.953  
+ Median :7.669   Median :7.936   Median :7.597   Median :8.085  
+ Mean   :7.763   Mean   :8.023   Mean   :7.682   Mean   :8.145  
+ 3rd Qu.:7.909   3rd Qu.:8.246   3rd Qu.:7.729   3rd Qu.:8.292  
+ Max.   :8.730   Max.   :9.037   Max.   :8.387   Max.   :8.729  
+    \end{Verbatim}
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{422}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{DAX} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{diff}\PY{p}{(}\PY{n}{log\PYZus{}eu}\PY{p}{[}\PY{p}{,} \PY{l+m}{1}\PY{p}{]}\PY{p}{)}
+\PY{n}{SMI} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{diff}\PY{p}{(}\PY{n}{log\PYZus{}eu}\PY{p}{[}\PY{p}{,} \PY{l+m}{2}\PY{p}{]}\PY{p}{)}
+\PY{n}{CAC} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{diff}\PY{p}{(}\PY{n}{log\PYZus{}eu}\PY{p}{[}\PY{p}{,} \PY{l+m}{3}\PY{p}{]}\PY{p}{)}
+\PY{n}{FTSE} \PY{o}{\PYZlt{}\PYZhy{}} \PY{n+nf}{diff}\PY{p}{(}\PY{n}{log\PYZus{}eu}\PY{p}{[}\PY{p}{,} \PY{l+m}{4}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{423}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{sp}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{garch}\PY{p}{(}\PY{n}{DAX}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{,}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{res}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{sp}\PY{o}{\PYZdl{}}\PY{n}{res}\PY{p}{[}\PY{l+m}{\PYZhy{}1}\PY{p}{]}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{res}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{o}{\PYZca{}}\PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{confint}\PY{p}{(}\PY{n}{sp}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{garch}\PY{p}{(}\PY{n}{DAX}\PY{p}{,}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A matrix: 3 × 2 of type dbl
+\begin{tabular}{r|ll}
+  & 2.5 \% & 97.5 \%\\
+\hline
+	a0 & 3.157588e-06 & 6.120989e-06\\
+	a1 & 4.627785e-02 & 9.037965e-02\\
+	b1 & 8.566877e-01 & 9.214456e-01\\
+\end{tabular}
+
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+garch(x = DAX, order = c(1, 1), trace = F)
+
+Coefficient(s):
+       a0         a1         b1  
+4.639e-06  6.833e-02  8.891e-01  
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_101_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{452}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{sp}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{garch}\PY{p}{(}\PY{n}{SMI}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\PY{n}{res}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{sp}\PY{o}{\PYZdl{}}\PY{n}{res}\PY{p}{[}\PY{l+m}{\PYZhy{}1}\PY{p}{]}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{res}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{o}{\PYZca{}}\PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{confint}\PY{p}{(}\PY{n}{sp}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{garch}\PY{p}{(}\PY{n}{SMI}\PY{p}{,}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A matrix: 3 × 2 of type dbl
+\begin{tabular}{r|ll}
+  & 2.5 \% & 97.5 \%\\
+\hline
+	a0 & 8.974129e-06 & 1.441805e-05\\
+	a1 & 7.640451e-02 & 1.525530e-01\\
+	b1 & 6.899628e-01 & 8.146311e-01\\
+\end{tabular}
+
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+garch(x = SMI, order = c(1, 1), trace = F)
+
+Coefficient(s):
+       a0         a1         b1  
+0.0000117  0.1144787  0.7522969  
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_102_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{425}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{sp}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{garch}\PY{p}{(}\PY{n}{CAC}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\PY{n}{res}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{sp}\PY{o}{\PYZdl{}}\PY{n}{res}\PY{p}{[}\PY{l+m}{\PYZhy{}1}\PY{p}{]}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{res}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{o}{\PYZca{}}\PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{confint}\PY{p}{(}\PY{n}{sp}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{garch}\PY{p}{(}\PY{n}{CAC}\PY{p}{,}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A matrix: 3 × 2 of type dbl
+\begin{tabular}{r|ll}
+  & 2.5 \% & 97.5 \%\\
+\hline
+	a0 & 6.542420e-06 & 1.702857e-05\\
+	a1 & 3.712088e-02 & 8.119886e-02\\
+	b1 & 7.821879e-01 & 9.056679e-01\\
+\end{tabular}
+
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+garch(x = CAC, order = c(1, 1), trace = F)
+
+Coefficient(s):
+       a0         a1         b1  
+1.179e-05  5.916e-02  8.439e-01  
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_103_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{426}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{3}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{sp}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n+nf}{garch}\PY{p}{(}\PY{n}{FTSE}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\PY{n}{res}\PY{o}{\PYZlt{}\PYZhy{}}\PY{n}{sp}\PY{o}{\PYZdl{}}\PY{n}{res}\PY{p}{[}\PY{l+m}{\PYZhy{}1}\PY{p}{]}
+\PY{n+nf}{plot}\PY{p}{(}\PY{n}{res}\PY{p}{,}\PY{n}{type}\PY{o}{=}\PY{l+s}{\PYZdq{}}\PY{l+s}{l\PYZdq{}}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{p}{)}
+\PY{n+nf}{acf}\PY{p}{(}\PY{n}{res}\PY{o}{\PYZca{}}\PY{l+m}{2}\PY{p}{)}
+\PY{n+nf}{confint}\PY{p}{(}\PY{n}{sp}\PY{p}{)}
+\PY{n+nf}{par}\PY{p}{(}\PY{n}{mfrow} \PY{o}{=} \PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,} \PY{l+m}{1}\PY{p}{)}\PY{p}{)}
+\PY{n+nf}{garch}\PY{p}{(}\PY{n}{FTSE}\PY{p}{,}\PY{n}{order}\PY{o}{=}\PY{n+nf}{c}\PY{p}{(}\PY{l+m}{1}\PY{p}{,}\PY{l+m}{1}\PY{p}{)}\PY{p}{,} \PY{n}{trace}\PY{o}{=}\PY{n+nb+bp}{F}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    A matrix: 3 × 2 of type dbl
+\begin{tabular}{r|ll}
+  & 2.5 \% & 97.5 \%\\
+\hline
+	a0 & 2.678668e-07 & 1.476560e-06\\
+	a1 & 3.201160e-02 & 5.863026e-02\\
+	b1 & 9.219037e-01 & 9.618274e-01\\
+\end{tabular}
+
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+Call:
+garch(x = FTSE, order = c(1, 1), trace = F)
+
+Coefficient(s):
+       a0         a1         b1  
+8.722e-07  4.532e-02  9.419e-01  
+
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_104_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    From the correlograms of the residuals we can conclude that the
+residuals are uncorrelated, thus being IID noise. We can also see that
+the correlograms of the squares are also IID noise
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
